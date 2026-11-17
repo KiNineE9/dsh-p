@@ -71,8 +71,6 @@ GuiN 是一个纯本地、离线运行的 Windows 个人生活记忆库（收纳
 1. 双击安装包：默认按当前用户安装到 `%LOCALAPPDATA%\Programs\GuiN`，也可在向导里改安装位置）。
 2. 安装完成后从桌面快捷方式或开始菜单「GuiN」启动，双击即可打开主界面。
 
-已实测（2026-11-17 18:40，GuiN 1.1.8）：把安装包复制到 `F:\GuiN-Delivery\` 后静默安装到默认目录成功，`HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall` 下写入「GuiN」卸载项（版本 1.1.8），桌面与开始菜单快捷方式齐全，启动后窗口标题为「GuiN」、exe 文件版本 1.1.8，数据写入 `%APPDATA%\guina\data.json`（沿用旧内部名，升级不丢数据）。卸载时默认保留该目录下的数据。
-
 ### 免安装版（portable）
 
 1. 把 `release\GuiN-Portable-1.1.8.exe` 复制到工作区之外。
@@ -80,26 +78,11 @@ GuiN 是一个纯本地、离线运行的 Windows 个人生活记忆库（收纳
 
 ### 安卓版（手机 / 平板）
 
-1. 把 `release\GuiN-1.1.8.apk` 传到手机上（USB、网盘、聊天工具发送均可），点开安装；系统提示「未知来源」时允许本次安装即可（APK 用项目自签名证书签名，没有上架应用商店）。
+1. 点开安装；系统提示「未知来源」时允许本次安装即可（APK 用项目自签名证书签名，没有上架应用商店）。
 2. 首次打开会有引导页；数据保存在应用私有目录，卸载应用会一起删除，重要数据请先在「设置 → 手动备份 / 导出」里备份。
 3. 手机与电脑之间互传数据：两端都打开「设置 → 数据同步」，一端点「绑定新设备」生成六位数字，另一端「输入邀请码绑定」或「扫码绑定」后，即可「发送数据 / 获取数据 / 合并数据」。手机 ↔ 电脑只同步分类、条目、备注，不同步便签与提醒。
 4. 详细安装、权限、已知差异见 [安卓版说明](docs/安卓版说明.md)。
 
-### 解包目录
-
-`release\win-unpacked\GuiN.exe` 也能运行，但同样要先把整个 `win-unpacked` 文件夹复制到工作区之外（便于验证或排查问题）。
-
-> 系统要求：Windows 10/11 64 位（打包目标为 win x64）。
-
-### 已经放在工作区里了，怎么临时打开？
-
-命令行加 `--no-sandbox` 可以绕过本机的沙箱初始化问题（仅建议临时排障）：
-
-```bat
-release\win-unpacked\GuiN.exe --no-sandbox
-```
-
-正式使用请按上面步骤把程序放到工作区之外。
 
 ## 开发环境
 
@@ -121,23 +104,6 @@ pnpm test:logic    # 纯逻辑自测（排序/搜索/到期档位等）
 pnpm test:e2e      # 自动化端到端自测
 pnpm icons         # 由 resources/ 图标重新生成 build/icon.ico
 ```
-
-### 打包时 winCodeSign 解压失败怎么办
-
-electron-builder 首次打包会下载 `winCodeSign` 工具并解压。部分 Windows 环境（当前用户没有创建符号链接的权限，或被安全软件拦截）会出现解压失败，打包随之中断。此时可以跳过签名与 exe 资源编辑步骤，完整命令为：
-
-```bash
-pnpm run pack:win -- --config.win.signAndEditExecutable=false
-```
-
-也可以分两步执行：
-
-```bash
-pnpm exec electron-vite build
-pnpm exec electron-builder --win --x64 --config.win.signAndEditExecutable=false
-```
-
-注意：跳过该步骤后产物不做代码签名，与 SmartScreen 相关的影响见 [已知限制](docs/已知限制.md)。
 
 ## 数据文件位置
 
